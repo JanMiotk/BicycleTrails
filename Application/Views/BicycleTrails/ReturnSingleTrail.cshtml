@@ -1,0 +1,300 @@
+﻿@model Models.DetailedTrail
+@{
+    ViewData["Title"] = "Home Page";
+
+    @using System.Xml.Linq;
+    var element = XDocument.Parse(Model.Trail);
+    XNamespace gpx = XNamespace.Get("http://www.topografix.com/GPX/1/1");
+    var find = element.Descendants(gpx + "wpt").First().Attributes().ToList();
+}
+
+<link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/lib/openlayers/ol.css" asp-append-version="true" />
+
+
+<div class="container">
+    <div class="row">
+        <div class="Photo col-6">
+            <img src="@String.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(Model.Photo))" />
+        </div>
+        <div class="col-6 description"><h3>@Model.Title</h3><span>@Model.Description</span></div>
+    </div>
+    <div class="row">
+        <div class="data col-12">
+            <h3>Informacje</h3>
+            <div class="row informations">
+                <div class="col-4">
+                    <div><span>Rodzaj aktywności <span> @Model.KindOfActivity</span></span> </div>
+                    <div><span>Dystans <span> @Model.Distance</span></span> </div>
+                    <div><span>Przewyższenia <span> @Model.Exceedance</span></span> </div>
+                    <div><span>Data <span> @Model.Data</span></span> </div>
+                </div>
+                <div class="col-4">
+                    <div>
+                        <span>Stopień trudności 
+                            <span> @Model.DifficultyLevel.ToLower().Split("stopień trudności:")[1]</span>
+                        </span> 
+                    </div>
+                    <div><span>Czas trwania <span> @Model.Duration</span></span> </div>
+                    <div><span>Suma podejść <span> @Model.SumUp</span></span> </div>
+                    <div><span>Lokalizacja <span> @Model.Location</span></span> </div>
+                </div>
+                <div class="col-4">
+                    <div><span>Ocena <span> @Model.Rating.0</span></span> </div>
+                    <div><span>Średnia prędkość <span> @Model.AverageSpeed</span></span> </div>
+                    <div><span>Suma zejść <span> @Model.SumDown</span></span> </div>
+                    <div><span>Autor <span> @Model.Author.ToLower().Split("przez")[1]</span></span> </div>
+                    <input type="hidden" id="trail" value='@Model.Trail' />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div><button id="geolocalization" class="btn btn-success">Włącz geolokalizację</button></div>
+        <form asp-action="ReturnSingleTrail">
+            <div class="form-group" style="visibility : collapse; margin : 0">
+                <input type="hidden" name="startx" class="form-control" value="@find[0].Value" />
+                <input type="hidden" name="starty" class="form-control" value="@find[1].Value" />
+                <input type="hidden" id="end" name="end" class="form-control" />
+                <input type="hidden" name="id" class="form-control" value="@Model.Id" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Prowadz na poczatek Trasy" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+    <div class="row extraInfromations">
+        <div class="col-12">
+            <h5>Dodatkowe Informacje</h5>
+            <div class="row informations">
+                <div class="col-4">
+                    <div><span>Dystans <span id="Distance"></span></span></div>
+                    <div><span>Średni czas trwania podróży <span id="Duration"></span></span></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="map"></div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+
+    @if (ViewBag.trail != null)
+    {
+        <input id="Geometry" value="@ViewBag.trail" style="visibility : collapse" />
+    }
+
+    <script src="~/lib/openlayers/ol.js"></script>
+    <script>
+        window.onload = () => {
+
+    var trail = $("#trail").val();
+    var end = $("#end");
+
+    var defaultStyle = {
+        'Point': new ol.style.Style({
+        image: new ol.style.Circle({
+        fill: new ol.style.Fill({
+        color: [0, 204, 0, 0.8]
+        }),
+        radius: 6,
+        stroke: new ol.style.Stroke({
+        color: [0, 204, 0, 0.8],
+        width: 1
+        })
+        })
+        }),
+        'LineString': new ol.style.Style({
+        stroke: new ol.style.Stroke({
+        color: '#f00',
+        width: 3
+        })
+        }),
+        'Polygon': new ol.style.Style({
+        fill: new ol.style.Fill({
+        color: 'rgba(0,255,255,0.5)'
+        }),
+        stroke: new ol.style.Stroke({
+        color: [20, 59, 153, 0.8],
+        width: 1
+        })
+        }),
+        'Polyline': new ol.style.Style({
+        fill: new ol.style.Fill({
+        color: 'rgba(0,255,255,0.5)'
+        }),
+        stroke: new ol.style.Stroke({
+        color: [20, 59, 153, 0.8],
+        width: 1
+        })
+        }),
+        'MultiPoint': new ol.style.Style({
+        image: new ol.style.Circle({
+        fill: new ol.style.Fill({
+        color: 'rgba(255,0,255,0.5)'
+        }),
+        radius: 5,
+        stroke: new ol.style.Stroke({
+        color: '#f0f',
+        width: 1
+        })
+        })
+        }),
+        'MultiLineString': new ol.style.Style({
+        stroke: new ol.style.Stroke({
+        color: [20, 59, 153, 0.8],
+        width: 8
+        })
+        }),
+        'MultiPolygon': new ol.style.Style({
+        fill: new ol.style.Fill({
+        color: 'rgba(0,0,255,0.5)'
+        }),
+        stroke: new ol.style.Stroke({
+        color: '#00f',
+        width: 1
+        })
+        })
+    };
+
+    var styleFunction = function (feature, resolution) {
+    var featureStyleFunction = feature.getStyleFunction();
+    if (featureStyleFunction) {
+    return featureStyleFunction.call(feature, resolution);
+    } else {
+    return defaultStyle[feature.getGeometry().getType()];
+    }
+    };
+
+    var iconFeature = new ol.Feature({
+    geometry: new ol.geom.Point([])
+    });
+
+    var source = new ol.source.Vector({
+    features: [iconFeature]
+    });
+    var vector = new ol.layer.Vector({
+    source: source
+    });
+
+    iconFeature.setStyle(new ol.style.Style({
+    image: new ol.style.Circle({
+    radius: 6,
+    fill: new ol.style.Fill({
+    color: [255, 255, 255, 0.8]
+    }),
+    stroke: new ol.style.Stroke({
+    color: [0, 204, 0, 0.8],
+    width: 5
+    })
+    })
+    }));
+
+    var map = new ol.Map({
+    target: 'map',
+    layers: [
+    new ol.layer.Tile({
+    source: new ol.source.BingMaps({
+    key: "AmGGdzDzxaRCbL4Ydl1ZyXxGwd8mWOERnX9JvPBjdcnxJeJCgORtbReue12dFstG",
+    imagerySet: "AerialWithLabels"
+    })
+    }),
+    vector
+    ],
+
+    view: new ol.View({
+    center: [2158581.678773377, 6803507.013606967],
+    zoom: 10,
+    })
+    });
+
+    var Gpx = (new ol.format.GPX()).readFeatures(trail, {featureProjection: 'EPSG:3857' })
+
+    var GpxLayer = new ol.layer.Vector({
+    source: new ol.source.Vector({
+
+    }),
+    style: styleFunction,
+
+    });
+    GpxLayer.getSource().addFeatures(Gpx);
+    map.addLayer(GpxLayer);
+
+
+    map.getView().setCenter(ol.proj.transform([@find[1].Value, @find[0].Value], 'EPSG:4326', 'EPSG:3857'))
+
+
+    var geolocation = new ol.Geolocation({
+    tracking: true,
+    enableHighAccuracy: true,
+    projection: map.getView().getProjection()
+    });
+
+    geolocation.on('change', function (evt) {
+    var coord = geolocation.getPosition();
+    end.val(ol.proj.transform(coord,'EPSG:3857','EPSG:4326'));
+
+    });
+
+    $("#geolocalization").click(() => {
+
+    var coord = geolocation.getPosition();
+    iconFeature.getGeometry().setCoordinates(coord);
+    map.getView().setCenter([2140236.791984935, 6836527.8098261645]);
+    map.getView().setZoom(6);
+
+    var coord = geolocation.getPosition();
+    iconFeature.getGeometry().setCoordinates(coord);
+    map.getView().setCenter(coord);
+
+    });
+
+    var geometry = $("#Geometry").val();
+    if (geometry != null) {
+
+
+    var geometry = JSON.parse(geometry);
+    $("#Distance").text((geometry.routes[0].distance / 1000).toFixed(1) +" km");
+    $("#Duration").text((geometry.routes[0].duration / 3600).toFixed(1) + " h");
+    $(".extraInfromations").css("display", "inherit");
+
+
+    const newStyle = {
+    route: new ol.style.Style({
+    stroke: new ol.style.Stroke({
+    width: 8,
+            color: [20, 59, 153, 0.8]
+        })
+    })
+    }
+
+    var vector = new ol.layer.Vector({
+    source: new ol.source.Vector({
+
+    }),
+    style: newStyle.route
+
+    });
+
+        var newGeometry = (new ol.format.Polyline()).readFeatures(geometry.routes[0].geometry,
+            { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' });
+
+    vector.getSource().addFeatures(newGeometry);
+    map.addLayer(vector);
+    map.getView().setCenter([2140236.791984935, 6836527.8098261645]);
+    map.getView().setZoom(6);
+
+    var coord = geolocation.getPosition();
+    iconFeature.getGeometry().setCoordinates(coord);
+    }
+
+    }
+    </script>
+
+}
+

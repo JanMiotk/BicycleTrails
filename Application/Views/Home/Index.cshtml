@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<link rel="stylesheet" href="~/css/mainSite.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/lib/openlayers/ol.css" asp-append-version="true" />
+
+@if(ViewBag.success != null)
+{
+    <p style="color:green">@ViewBag.success</p>
+}
+<div id="map">
+
+</div>
+
+@section Scripts
+{
+    <script src="~/lib/openlayers/ol.js"></script>
+    <script>
+        var map = new ol.Map({
+            view: new ol.View({
+                center: [0, 0],
+                zoom: 3
+            }),
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.BingMaps({
+                       key:"AmGGdzDzxaRCbL4Ydl1ZyXxGwd8mWOERnX9JvPBjdcnxJeJCgORtbReue12dFstG",
+                       imagerySet: "AerialWithLabels"
+                    })
+                })
+            ],
+            target: 'map'
+        })
+
+        var GoogleRoadMap = new TileLayer({
+        name: "GoogleRoadMap",
+        preload: Infinity,
+        visible: false,
+        source: new TileImage({
+          url: "http://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+        })
+      });
+
+    </script>
+}
+

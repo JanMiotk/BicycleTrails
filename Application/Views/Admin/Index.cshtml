@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+    <table class="table table-sm table-bordered">
+        <tr>
+            <th>ID</th>
+            <th>Opcje Zarzadzania</th>
+            <th>Przekieruj</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Przegladaj pliki do załadowania do bazy danych</td>
+            <td><button class="btn btn-primary"><a asp-action="ReturnFilesToLoad" style="color:white">Przenieś</a></button></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Wyświetl liste użytkowników</td>
+            <td><button class="btn btn-primary"><a asp-action="ReturnUsersList" style="color:white">Przenieś</a></button></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Wyswietl trasy z bazy danych</td>
+            <td><button class="btn btn-primary"><a asp-action="ReturnTrailsFromDataBase" style="color:white">Przenieś</a></button></td>
+        </tr>
+
+    </table>
+

@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "openlayers@4.6.5",
+      "destination": "wwwroot/lib/openlayers/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "bootstrap@4.4.1",
+      "destination": "wwwroot/lib/bootstrap/"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<string>
+
+<table class="table table-sm table-bordered">
+
+    <tr>
+        <th>Scierzka</th>
+        <th>Operacja</th>
+    </tr>
+
+    @foreach (var path in Model)
+     {
+        <tr>
+            <td>@path</td>
+            <td>
+                <form asp-action="LoadDataIntoDatabase">
+                    <div class="form-group" style="visibility : collapse; margin : 0">
+                        <input type="hidden" name="path" class="form-control" value="@path" />
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Załaduj" class="btn btn-primary" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+     }
+
+</table>

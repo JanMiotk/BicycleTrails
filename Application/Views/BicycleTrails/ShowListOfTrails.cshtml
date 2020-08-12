@@ -1,0 +1,55 @@
+﻿@model IPagedList<Models.DetailedTrail>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@{
+    ViewData["Title"] = "Index";
+}
+<link rel="stylesheet" href="~/css/listOfLinks.css" asp-append-version="true" />
+<div class="container">
+    @foreach (var item in Model)
+    {
+        <div class="row tytul offset-2">
+            <h3>@item.Title</h3>
+        </div>
+
+
+        <div class="row trasa offset-2">
+            <div class="information">
+                <div><img src="~/Icons/Bike.png" /></div>
+                <div>
+                    <div><span>@item.Rating.0</span></div>
+                    <div><img src="~/Icons/Star.png" /></div>
+                </div>
+                <div>
+                    <div>
+                        <span>@(item.Distance != null ? item.Distance.ToLower().Split("km")[0] : "brak")</span>
+                    </div>
+                    <div><span>km</span></div>
+                </div>
+                <div>
+                    <div><span>@(item.Duration != null  ? item.Duration.Split("h")[0] : "brak")</span></div>
+                    <div><span>h</span></div>
+                    <div><img src="~/Icons/Clock.png" /></div>
+                </div>
+            </div>
+            <div><a asp-controller="BicycleTrails" asp-action="ReturnSingleTrail" asp-route-id="@item.Id">
+                <img src="@String.Format("data:image/jpg;base64,{0}", Convert.ToBase64String(item.Photo))" /></a>
+            </div>
+            <div><a asp-controller="BicycleTrails" asp-action="ReturnSingleTrail" asp-route-id="@item.Id">
+                <img src="@String.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.Map))" /></a>
+            </div>
+        </div>
+
+     }
+    <div class="row offset-2 pagination">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+    new PagedListRenderOptions
+    {
+        LiElementClasses = new string[] { "page-item" },
+        PageClasses = new string[] { "page-link" },
+        MaximumPageNumbersToDisplay = 3
+    })
+    </div>
+
+</div>
+

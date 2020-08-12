@@ -1,0 +1,19 @@
+﻿.information {
+background-color: #4975AE;
+width: 40px;
+}
+
+.information img {
+display: block;
+margin-left: auto;
+margin-right: auto;
+}
+
+.information div {
+text-align: center;
+color: white;
+}
+
+.information div div img {
+filter: invert(100%)
+}

@@ -1,0 +1,38 @@
+﻿
+#map {
+width : 100%;
+height : 100%;
+}
+
+.Photo img {
+width: 100%;
+height: 100%;
+}
+
+.informations div span {
+font-weight: bold;
+}
+
+.informations div span span {
+color: #00b300;
+}
+
+.description span {
+color: #00b300;
+}
+
+.data,
+.data informations,
+#map {
+margin-top: 10px;
+}
+
+.btn{
+    margin : 10px 10px 0px 10px;
+}
+
+.extraInfromations {
+    display: none;
+}
+
+
