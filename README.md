@@ -1,7 +1,9 @@
 # BicycleTrails
 It is necessary to instal all requirement libraries
 
-You should create your own databases from SQL Server Express and MSQL database providers, and change appsettings.json
+You should create your own databases from SQL Server Express and MSQL.
+
+Fill appsettings.json your data.
 
 "ConnectionStrings": {
     "SQLServer": "Data Source =.\\SQLEXPRESS; Initial Catalog = catalog; Integrated Security = True;MultipleActiveResultSets=true",
