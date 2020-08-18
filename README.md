@@ -49,7 +49,7 @@ Fill appsettings.json your data.
   
   * Super Admin can delete users after receiving properly claims from local server and google
   
-  ![alt text](https://media.giphy.com/media/kH5vQipNArMjoInFwp/giphy.gif)
+  ![alt text](https://media.giphy.com/media/hvRqIm1fWTi4DDYdlU/giphy.gif)
   
   
   
