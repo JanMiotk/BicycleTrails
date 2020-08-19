@@ -42,7 +42,7 @@
 
      }
     <div class="row offset-2 pagination">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+        @Html.PagedListPager(Model, page => Url.Action("ShowListOfTrails", new { page }),
     new PagedListRenderOptions
     {
         LiElementClasses = new string[] { "page-item" },
