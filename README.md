@@ -1,5 +1,7 @@
 # BicycleTrails
 
+Used technologies: c#, .net core, openlayers, javascript
+
 ## Need to do
 
 It is necessary to install all requirement libraries
